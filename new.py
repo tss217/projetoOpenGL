@@ -16,13 +16,23 @@ def load_texture(filename):
     glBindTexture(GL_TEXTURE_2D, texture_id)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
+    
     glTexImage2D(
         GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture_data
     )
 
+    error = glGetError()
+    if error != GL_NO_ERROR:
+        print(f"Erro OpenGL durante o carregamento da textura: {error}")
+
     return texture_id
 
 def triangle():
+    glColor3f(0, 1, 0)
+
     glBegin(GL_POLYGON);
     glVertex3d(-1.6,-2.6,0.0);
     glVertex3d(-1.6,-1.0,0.0);
@@ -348,6 +358,8 @@ def main():
     
     gluPerspective(45, (display[0] / display[1]), 0.1, 50.0)
     glTranslatef(0.0, 0.0, -5)
+
+    # load_texture("/home/ts217/Documents/provaVC/projetoOpenGL/creeper.png")
     
 
 
@@ -366,7 +378,7 @@ def main():
         
         if rotating:
             glRotatef(1, 3, 1, 1)
-        
+    
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glEnable(GL_TEXTURE_2D)
         glPushMatrix()
@@ -376,6 +388,10 @@ def main():
         glDisable(GL_TEXTURE_2D)
         pygame.display.flip()
         pygame.time.wait(10)
+
+        error = glGetError()
+        if error != GL_NO_ERROR:
+            print(f"Erro OpenGL durante o desenho: {error}")
 
 if __name__ == "__main__":
     main()
